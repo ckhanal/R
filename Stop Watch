@@ -1,0 +1,62 @@
+import simplegui
+
+trial = 0
+win = 0
+clk = 0
+ms = 0
+stop_clk = False
+
+        
+def format(t):
+    global ms
+    minute = t // 1000
+    sec = (t - minute * 1000) // 10
+    ms = (t - minute * 1000) % 10
+    if sec < 10:
+        return str(minute) + ":0" + str(sec) + "." + str(ms)
+    else:
+        return str(minute) + ":" + str(sec) + "." + str(ms)
+
+def start():
+    global stop_clk
+    if stop_clk == False:
+        timer.start()
+        stop_clk = True
+        
+def stop():
+    global trial, win, stop_clk
+    if stop_clk == True:
+        timer.stop()
+        stop_clk = False
+        
+        trial = trial + 1
+        if ms == 0:
+            win = win + 1
+            
+def reset():
+    global trial, win, clk, ms, stop_clk
+    if stop_clk == True:
+        timer.stop()
+        stop_clk = False
+    trial = 0
+    win = 0
+    clk = 0
+    ms = 0
+        
+def tick():
+    global clk
+    clk = clk + 1
+    if clk - clk // 1000 * 1000 == 600:
+        clk = clk + 400
+    
+def draw(canvas):
+    canvas.draw_text(str(win) + "/" + str(trial), [250, 30], 30, "Green")
+    canvas.draw_text(format(clk), [100, 160], 50, "White")
+    
+frame = simplegui.create_frame("Stopwatch Game", 300, 300)
+timer = simplegui.create_timer(100, tick)
+frame.add_button("Start", start, 100)
+frame.add_button("Stop", stop, 100)
+frame.add_button("Reset", reset, 100)
+frame.set_draw_handler(draw)
+frame.start()
